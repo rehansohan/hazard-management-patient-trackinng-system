@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospitals | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+        <div>
+            <span class="eyebrow">Facility directory</span>
+            <h1 class="page-title mb-2">Hospitals</h1>
+            <p class="page-subtitle mb-0">View registered facilities and their capacity at a glance.</p>
+        </div>
+        <div class="d-flex gap-3">
+            <div class="metric-card">
+                <div class="metric-label">Registered hospitals</div>
+                <div class="metric-value">{{ hospitals|length }}</div>
+            </div>
+            <div class="align-self-end">
+                <a href="{% url 'add_hospital' %}" class="btn btn-success">Add Hospital</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="surface-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Phone</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hospitals %}
+                <tr>
+                    <td class="fw-semibold">{{ h.name }}</td>
+                    <td class="text-muted">{{ h.location }}</td>
+                    <td>{{ h.phone }}</td>
+                    <td>{{ h.capacity }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        <div class="py-5 text-center text-muted">No hospitals found.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

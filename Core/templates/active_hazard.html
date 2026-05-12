@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Active Hazards | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+        <div>
+            <span class="eyebrow">Live response</span>
+            <h1 class="page-title mb-2">Active hazards</h1>
+            <p class="page-subtitle mb-0">Monitor unresolved incidents and move into the detailed response view when needed.</p>
+        </div>
+        <div class="metric-card text-md-end">
+            <div class="metric-label">Open incidents</div>
+            <div class="metric-value">{{ hazards|length }}</div>
+        </div>
+    </div>
+</section>
+
+<section class="surface-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Severity</th>
+                    <th>Reported At</th>
+                    <th>Reported By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hazards %}
+                <tr>
+                    <td class="fw-semibold">{{ h.title }}</td>
+                    <td class="text-muted">{{ h.description|truncatechars:90 }}</td>
+                    <td>
+                        {% if h.servity == 'High' %}
+                            <span class="badge rounded-pill badge-soft-danger">{{ h.get_servity_display }}</span>
+                        {% elif h.servity == 'Medimu' %}
+                            <span class="badge rounded-pill badge-soft-warning">{{ h.get_servity_display }}</span>
+                        {% else %}
+                            <span class="badge rounded-pill badge-soft-success">{{ h.get_servity_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ h.created_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ h.user.username }}</td>
+                    <td>
+                        <a href="{% url 'hazard_detail' h.id %}" class="btn btn-sm btn-info">See Details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="py-5 text-center text-muted">
+                            No active hazards at the moment.
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

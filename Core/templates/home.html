@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <span class="eyebrow">Response coordination center</span>
+            <h1 class="page-title">Manage hazards with a calmer, clearer command view.</h1>
+            <p class="page-subtitle">
+                Track incidents, coordinate hospitals, and register patient support from one structured dashboard.
+                The interface is designed to keep the highest-priority work visible and easy to act on.
+            </p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <a href="{% url 'Hazard_report' %}" class="btn btn-primary">Report Hazard</a>
+                <a href="{% url 'Active_hazard' %}" class="btn btn-outline-primary">View Active Hazards</a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="info-panel h-100">
+                <div class="section-label mb-2">Quick access</div>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="metric-card">
+                            <div class="metric-label">Hospital registry</div>
+                            <div class="metric-value">Live</div>
+                            <div class="text-muted">Centralized hospital records and capacity tracking.</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="metric-card">
+                            <div class="metric-label">Incident flow</div>
+                            <div class="metric-value">Fast</div>
+                            <div class="text-muted">Report hazards and move them into active response.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-stack">
+    <div class="surface-card">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+            <div>
+                <div class="section-label">Core workflows</div>
+                <h2 class="h4 mb-1 fw-bold">Everything the team needs is one click away</h2>
+                <p class="text-muted mb-0">Move between reporting, triage, and response without changing context.</p>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="action-card">
+                    <div class="section-label mb-2">01</div>
+                    <h3 class="h5 fw-bold">Report a hazard</h3>
+                    <p class="text-muted mb-3">Capture title, description, and severity in a clean, guided form.</p>
+                    <a class="btn btn-danger w-100" href="{% url 'Hazard_report' %}">Open report form</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="action-card">
+                    <div class="section-label mb-2">02</div>
+                    <h3 class="h5 fw-bold">Review active hazards</h3>
+                    <p class="text-muted mb-3">See what is still unresolved and drill into details quickly.</p>
+                    <a class="btn btn-info w-100" href="{% url 'Active_hazard' %}">Open active list</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="action-card">
+                    <div class="section-label mb-2">03</div>
+                    <h3 class="h5 fw-bold">Coordinate hospitals</h3>
+                    <p class="text-muted mb-3">Maintain hospital records and connect patients to the right facility.</p>
+                    <a class="btn btn-success w-100" href="{% url 'hospital_list' %}">View hospitals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mb-4">
+    <span class="eyebrow">Admin overview</span>
+    <h1 class="page-title">Command dashboard</h1>
+    <p class="page-subtitle mb-0">Manage hazards, patients, hospitals, and missing reports from one central hub.</p>
+</section>
+
+<!-- Key Metrics -->
+<section class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-start border-primary border-4">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-2">HAZARD INCIDENTS</div>
+                <div class="h3 mb-2">{{ hazards_count }}</div>
+                <div class="small text-muted mb-3">
+                    <span class="badge bg-success">Active: {{ active_count }}</span>
+                    <span class="badge bg-secondary">Resolved: {{ resolved_count }}</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'Hazard_report' %}" class="btn btn-sm btn-primary flex-grow-1">Report</a>
+                    <a href="{% url 'Active_hazard' %}" class="btn btn-sm btn-outline-primary flex-grow-1">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-start border-info border-4">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-2">PATIENTS</div>
+                <div class="h3 mb-2">{{ patients_count }}</div>
+                <div class="small text-muted mb-3">Registered & linked to incidents</div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'add_patient' %}" class="btn btn-sm btn-info flex-grow-1">Add Patient</a>
+                    <button class="btn btn-sm btn-outline-info flex-grow-1" data-bs-toggle="tooltip" title="Bulk upload coming soon">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-start border-warning border-4">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-2">HOSPITALS</div>
+                <div class="h3 mb-2">{{ hospitals_count }}</div>
+                <div class="small text-muted mb-3">Facilities in network</div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'add_hospital' %}" class="btn btn-sm btn-warning flex-grow-1">Add Hospital</a>
+                    <a href="{% url 'hospital_list' %}" class="btn btn-sm btn-outline-warning flex-grow-1">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-start border-danger border-4">
+            <div class="card-body">
+                <div class="text-muted small fw-semibold mb-2">MISSING PERSONS</div>
+                <div class="h3 mb-2">{{ missing_count }}</div>
+                <div class="small text-muted mb-3">Reported & being tracked</div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-danger flex-grow-1" data-bs-toggle="tooltip" title="Report missing from hazard details">Report</button>
+                    <a href="#recentMissing" class="btn btn-sm btn-outline-danger flex-grow-1">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Recent Hazards & Management -->
+<section class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>📋 Recent Hazards</strong>
+                    <a href="{% url 'Hazard_report' %}" class="btn btn-sm btn-primary">+ New Report</a>
+                </div>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for h in recent_hazards %}
+                <div class="list-group-item py-3 px-4">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <a href="{% url 'hazard_detail' h.id %}" class="text-decoration-none">
+                                <div class="d-flex gap-2 align-items-center mb-1">
+                                    <h6 class="mb-0">{{ h.title }}</h6>
+                                    <span class="badge bg-danger">{{ h.get_servity_display }}</span>
+                                    <span class="badge {% if h.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ h.get_status_display }}</span>
+                                </div>
+                                <small class="text-muted">{{ h.description|truncatechars:80 }}</small>
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'edit_hazard' h.id %}" class="btn btn-sm btn-outline-warning" title="Edit">✏️</a>
+                                <a href="{% url 'delete_hazard' h.id %}" class="btn btn-sm btn-outline-danger" title="Delete">🗑️</a>
+                            </div>
+                            <div class="small text-muted text-end mt-2">{{ h.created_at|date:"M d, Y" }}</div>
+                        </div>
+
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-4 text-center text-muted">No recent hazards. <a href="{% url 'Hazard_report' %}">Report one now</a></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>⚡ Quick Actions</strong>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'Hazard_report' %}" class="btn btn-primary d-flex align-items-center gap-2">
+                        <span>📌</span>
+                        <span>Report New Hazard</span>
+                    </a>
+                    <a href="{% url 'add_patient' %}" class="btn btn-info d-flex align-items-center gap-2">
+                        <span>👤</span>
+                        <span>Add New Patient</span>
+                    </a>
+                    <a href="{% url 'add_hospital' %}" class="btn btn-warning d-flex align-items-center gap-2">
+                        <span>🏥</span>
+                        <span>Register Hospital</span>
+                    </a>
+                    <a href="{% url 'Active_hazard' %}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                        <span>📊</span>
+                        <span>View All Active Hazards</span>
+                    </a>
+                    <a href="{% url 'hospital_list' %}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                        <span>🗂️</span>
+                        <span>Manage Hospital Network</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Missing Reports & Status -->
+<section class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong id="recentMissing">🚨 Missing Persons Reports</strong>
+                </div>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for c in recent_complaints %}
+                <div class="list-group-item py-3 px-4">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="d-flex gap-2 align-items-center mb-1">
+                                <strong>{{ c.missing_person_name }}</strong>
+                                <span class="badge bg-warning text-dark">Age: {{ c.missing_person_age }}</span>
+                                <span class="badge bg-secondary">{{ c.missing_person_gender }}</span>
+                            </div>
+                            <small class="text-muted d-block mb-1">📍 Last seen: {{ c.last_seen_location }}</small>
+                            <small class="text-muted">📋 Reported by: {{ c.person_name }} | 📞 {{ c.contact_number }}</small>
+                        </div>
+                        <div class="col-auto">
+                            {% if request.user.category == 'admin' %}
+                            <div class="d-flex gap-2 mb-2">
+                                <a href="{% url 'edit_missing_complaint' c.id %}" class="btn btn-sm btn-outline-warning" title="Edit">✏️</a>
+                                <a href="{% url 'delete_missing_complaint' c.id %}" class="btn btn-sm btn-outline-danger" title="Delete">🗑️</a>
+                            </div>
+                            {% endif %}
+                            <div class="small text-muted text-end">{{ c.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-4 text-center text-muted">No missing reports yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <strong>📈 System Status</strong>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center">
+                    <div class="col-6">
+                        <div class="h5 text-primary">{{ hazards_count }}</div>
+                        <small class="text-muted">Total Incidents</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="h5 text-success">{{ active_count }}</div>
+                        <small class="text-muted">Active Now</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="h5 text-info">{{ patients_count }}</div>
+                        <small class="text-muted">Total Patients</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="h5 text-warning">{{ missing_count }}</div>
+                        <small class="text-muted">Missing Reports</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <span class="badge bg-success">System Online</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>🔒 Admin Tools</strong>
+            </div>
+            <div class="card-body">
+                <div class="small text-muted mb-3">Manage system settings and data</div>
+                <div class="d-grid gap-2">
+                    <a href="/admin/" class="btn btn-outline-secondary btn-sm">Django Admin Panel</a>
+                    <button class="btn btn-outline-secondary btn-sm" disabled>Export Data (Coming)</button>
+                    <button class="btn btn-outline-secondary btn-sm" disabled>System Logs (Coming)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

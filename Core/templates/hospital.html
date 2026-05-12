@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospital View | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mx-auto" style="max-width: 920px;">
+    <span class="eyebrow">Hospital view</span>
+    <h1 class="page-title">Hospital management</h1>
+    <p class="page-subtitle mb-0">
+        This section now shares the same dashboard styling as the rest of the system. Use the hospital list to view or register facilities.
+    </p>
+    <div class="d-flex flex-wrap gap-3 mt-4">
+        <a href="{% url 'hospital_list' %}" class="btn btn-primary">View Hospital List</a>
+        <a href="{% url 'add_hospital' %}" class="btn btn-outline-primary">Add Hospital</a>
+    </div>
+</section>
+{% endblock %}

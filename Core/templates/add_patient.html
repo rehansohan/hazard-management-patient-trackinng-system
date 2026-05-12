@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Patient | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="surface-card mx-auto" style="max-width: 920px;">
+    <div class="mb-4">
+        <span class="eyebrow">Patient intake</span>
+        <h1 class="h2 fw-bold mt-3 mb-2">Add patient details</h1>
+        <p class="text-muted mb-0">Record the patient against a hazard and supporting hospital without losing the response context.</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                {{ form.name }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Age</label>
+                {{ form.age }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Gender</label>
+                {{ form.gender }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Condition</label>
+                {{ form.condition }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Hospital</label>
+                {{ form.hospital }}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Hazard</label>
+                {{ form.hazard }}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Image</label>
+                {{ form.image }}
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            <button type="submit" class="btn btn-success">Add Patient</button>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

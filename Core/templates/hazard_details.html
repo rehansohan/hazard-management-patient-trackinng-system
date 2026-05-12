@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Hazard Details | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="hero-panel mb-4">
+    <div class="row align-items-end g-3">
+        <div class="col-lg-8">
+            <span class="eyebrow">Incident detail</span>
+            <h1 class="page-title mb-2">{{ hazard.title }}</h1>
+            <p class="page-subtitle mb-0">{{ hazard.description }}</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <div class="d-inline-flex flex-wrap gap-2 justify-content-lg-end">
+                <span class="badge rounded-pill badge-soft-info">{{ hazard.get_status_display }}</span>
+                <span class="badge rounded-pill badge-soft-warning">{{ hazard.get_servity_display }}</span>
+            </div>
+            <div class="text-muted mt-2">Reported {{ hazard.created_at|date:"M d, Y H:i" }}</div>
+        </div>
+    </div>
+</section>
+
+<section class="content-stack">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="surface-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="section-label">Patient allocation</div>
+                        <h2 class="h4 fw-bold mb-0">Patients linked to this hazard</h2>
+                    </div>
+                    <div class="metric-card py-3 px-4">
+                        <div class="metric-label">Patient count</div>
+                        <div class="metric-value">{{ patients|length }}</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Patient ID</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Condition</th>
+                                <th>Hospital</th>
+                                <th>Registered</th>
+                                {% if request.user.category == 'admin' %}<th>Actions</th>{% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                    {% for patient in patients %}
+                            <tr>
+                                <td style="width: 96px;">
+                                    {% if patient.image %}
+                                        <img src="{{ patient.image.url }}" alt="{{ patient.name }}" class="rounded-3" style="width: 72px; height: 72px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-3 bg-light border text-center text-muted d-flex align-items-center justify-content-center" style="width: 72px; height: 72px; font-size: 0.75rem; line-height: 1.1;">
+                                            No image
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-semibold">
+                                    {% if patient.patient_id %}
+                                        {{ patient.patient_id }}
+                                    {% else %}
+                                        #{{ patient.id }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ patient.name }}</td>
+                                <td>{{ patient.age }}</td>
+                                <td>{{ patient.gender }}</td>
+                                <td>
+                                    <span class="badge rounded-pill badge-soft-success">{{ patient.get_condition_display }}</span>
+                                </td>
+                                <td>{{ patient.hospital }}</td>
+                                <td class="text-muted">{{ patient.created_at|date:"M d, Y H:i" }}</td>
+                                {% if request.user.category == 'admin' %}
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'edit_patient' patient.id %}" class="btn btn-sm btn-outline-warning" title="Edit">✏️</a>
+                                        <a href="{% url 'delete_patient' patient.id %}" class="btn btn-sm btn-outline-danger" title="Delete">🗑️</a>
+                                    </div>
+                                </td>
+                                {% endif %}
+                            </tr>
+                    {% empty %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="py-5 text-center text-muted">
+                                        No patients have been linked to this hazard yet.
+                                    </div>
+                                </td>
+                            </tr>
+                    {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="surface-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="section-label">Missing Persons</div>
+                        <h2 class="h5 fw-bold mb-0">Reported missing complaints</h2>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reportMissingModal">Report Missing Person</button>
+                    </div>
+                </div>
+
+                <div class="list-group">
+                    {% for complaint in hazard.missing_complaints.all %}
+                    <div class="list-group-item d-flex gap-3 align-items-start">
+                        <div style="width:64px; flex: 0 0 64px;">
+                            {% if complaint.image %}
+                                <img src="{{ complaint.image.url }}" alt="{{ complaint.missing_person_name }}" class="rounded-3" style="width:64px; height:64px; object-fit:cover;">
+                            {% else %}
+                                <div class="rounded-3 bg-light border text-center text-muted d-flex align-items-center justify-content-center" style="width:64px; height:64px; font-size:0.75rem;">No image</div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-fill">
+                            <div class="d-flex justify-content-between">
+                                <div class="fw-semibold">{{ complaint.missing_person_name }}</div>
+                                <div class="text-muted small">{{ complaint.created_at|date:"M d, Y" }}</div>
+                            </div>
+                            <div class="text-muted small">Last seen: {{ complaint.last_seen_location }}</div>
+                            <div class="mt-2">
+                                <span class="badge bg-warning text-dark">Reported by {{ complaint.person_name }}</span>
+                                <span class="badge bg-secondary ms-1">Contact: {{ complaint.contact_number }}</span>
+                            </div>
+                            {% if request.user.category == 'admin' %}
+                            <div class="mt-2 d-flex gap-2">
+                                <a href="{% url 'edit_missing_complaint' complaint.id %}" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
+                                <a href="{% url 'delete_missing_complaint' complaint.id %}" class="btn btn-sm btn-outline-danger">🗑️ Delete</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="py-5 text-center text-muted">
+                        No missing complaints reported for this hazard yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal: Report Missing Person -->
+<div class="modal fade" id="reportMissingModal" tabindex="-1" aria-labelledby="reportMissingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportMissingModalLabel">Report Missing Person</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'add_missing_complaint' hazard.id %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Your name</label>
+                            {{ missing_form.person_name }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Your age</label>
+                            {{ missing_form.age }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Your gender</label>
+                            {{ missing_form.gender }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Missing person's name</label>
+                            {{ missing_form.missing_person_name }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Missing person's age</label>
+                            {{ missing_form.missing_person_age }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Missing person's gender</label>
+                            {{ missing_form.missing_person_gender }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Last seen location</label>
+                            <input type="text" name="last_seen_location" class="form-control" placeholder="Where were they last seen?" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Contact number</label>
+                            {{ missing_form.contact_number }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Photo (optional)</label>
+                            {{ missing_form.image }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Additional details (clothes, distinguishing features)"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

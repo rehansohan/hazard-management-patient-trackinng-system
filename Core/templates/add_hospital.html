@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Hospital | Hazard Management System{% endblock %}
+
+{% block content %}
+<section class="surface-card mx-auto" style="max-width: 860px;">
+    <div class="mb-4">
+        <span class="eyebrow">Support network</span>
+        <h1 class="h2 fw-bold mt-3 mb-2">Register a hospital</h1>
+        <p class="text-muted mb-0">Keep facility records organized so patient routing stays quick during incidents.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Hospital Name</label>
+            {{ form.name }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Location</label>
+            {{ form.location }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            {{ form.phone }}
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Capacity</label>
+            {{ form.capacity }}
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Save Hospital</button>
+    </form>
+</section>
+{% endblock %}
