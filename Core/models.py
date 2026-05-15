@@ -124,7 +124,7 @@ class Patient(models.Model):
                 new_num = 1
 
             self.patient_id = (
-                f"PAT-{hazard_name}-{new_num:03d}"
+                f"PAT-{new_num:03d}"
             )
 
         super().save(*args, **kwargs)

@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse, HttpResponseForbidden
 from .forms import HazardReportForm,HospitalForm,PatientForm,MissingComplaintForm
 from.models import HazardReport,Hospital,Patient,MissingComplaint
+from django.db.models import Q
 
 # Permission check helper
 def is_admin(user):
@@ -68,8 +69,14 @@ def active_hazards(request):
     
 def hazard_detail(request,id):
     hazard = get_object_or_404(HazardReport,id=id)
+    query = request.GET.get('q')
     patients = hazard.patients.all()
     missing_form = MissingComplaintForm()
+    if query:
+        patients = patients.filter(
+            Q(name__icontains=query)|
+            Q(patient_id__icontains = query)
+        )
     return render(
         request,
         'hazard_details.html',{

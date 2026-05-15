@@ -35,6 +35,26 @@
                     </div>
                 </div>
 
+                <div>
+                <form method="GET" class="mb-4">
+                    <div class="input-group">
+
+                        <input
+                            type="text"
+                            name="q"
+                            class="form-control"
+                            placeholder="Search patient by name or ID..."
+                            value="{{ request.GET.q }}"
+                        >
+
+                        <button class="btn btn-primary" type="submit">
+                            Search
+                        </button>
+
+                    </div>
+                </form>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
@@ -114,6 +134,11 @@
                     </div>
                 </div>
 
+                 <div class="metric-card py-3 px-4">
+                        <div class="metric-label">Messing Person</div>
+                        <div class="metric-value">{{ hazard.missing_complaints.all|length }}</div>
+                    </div>
+
                 <div class="list-group">
                     {% for complaint in hazard.missing_complaints.all %}
                     <div class="list-group-item d-flex gap-3 align-items-start">
@@ -155,12 +180,14 @@
 
 <!-- Modal: Report Missing Person -->
 <div class="modal fade" id="reportMissingModal" tabindex="-1" aria-labelledby="reportMissingModalLabel" aria-hidden="true">
+    
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="reportMissingModalLabel">Report Missing Person</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            
             <form action="{% url 'add_missing_complaint' hazard.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-body">
@@ -169,6 +196,7 @@
                             <label class="form-label">Your name</label>
                             {{ missing_form.person_name }}
                         </div>
+                        
                         <div class="col-md-3">
                             <label class="form-label">Your age</label>
                             {{ missing_form.age }}
